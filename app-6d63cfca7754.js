@@ -484,7 +484,11 @@ function renderEvidenceSources(){
  <div class="source-grid" style="margin-top:20px"><section class="panel"><h2>仍缺少的用户证据</h2><ul>${(d?.limits||[]).map(x=>`<li>${esc(x)}</li>`).join('')}</ul><p>当前只读权限不支持任意 SQL 查询；需要数据源提供完整 ID 对照和按用户查询的任务、产物及实际采用事件。</p></section><section class="panel"><h2>首付后使用分组暂不作全体结论</h2><p>q8746 返回 ${fmt(d?.payment_followup.source_count)} 人，付款卡为 ${fmt(m.counts.paid)} 人。${d?.payment_followup.population_matches?'人数与提取日期一致，分析时仍需核对观察窗口。':'差异尚未解释，不据此判断所有付款用户的留存。'}</p><h2>月费原卡指标</h2><dl class="facts">${m.monthly_metrics.map(r=>`<div><dt>${esc(r.metric)}</dt><dd>${fmt(r.value)} ${esc(r.unit)}</dd></div>`).join('')}</dl><p class="caption">提取于 ${esc(stamp(m.manifest.sources['8776']?.fetched_at))}</p></section></div>`;
 
  const sourceAnchor = /^#source-\d+$/.test(location.hash) && document.getElementById(location.hash.slice(1));
- if(sourceAnchor) requestAnimationFrame(()=>sourceAnchor.scrollIntoView({block:'center'}));
+ if(sourceAnchor) requestAnimationFrame(()=>{
+   if(state.view!=='sources') return;
+   history.replaceState(null,'',location.pathname+location.search+'#'+sourceAnchor.id);
+   sourceAnchor.scrollIntoView({block:'center'});
+ });
 }
 
 ;
